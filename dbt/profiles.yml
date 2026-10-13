@@ -1,7 +1,7 @@
 # Credentials come from environment variables (see ../.env.example). Never hardcode them.
 # Targets:
 #   local -> DuckDB file on your machine, no cloud account needed (also used by CI)
-#   dev   -> your Snowflake trial
+#   dev   -> your Snowflake trial, as the DBT_SVC service user with key-pair auth (no password)
 br_credit:
   target: "{{ env_var('DBT_TARGET', 'local') }}"
   outputs:
@@ -13,8 +13,8 @@ br_credit:
     dev:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
-      user: "{{ env_var('SNOWFLAKE_USER') }}"
-      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'DBT_SVC') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
       role: "{{ env_var('SNOWFLAKE_ROLE', 'TRANSFORMER') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'CREDITO_WH') }}"
       database: "{{ env_var('SNOWFLAKE_DATABASE', 'CREDITO') }}"

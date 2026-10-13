@@ -29,6 +29,15 @@ grant select on future tables in schema credito.raw to role transformer;
 -- Replace <YOUR_USER> with your Snowflake login name.
 grant role transformer to user <YOUR_USER>;
 
+-- Service user for dbt and Airflow: no password, key-pair authentication only.
+-- Replace <PUBLIC_KEY> with the content of dbt_svc_key.pub without the BEGIN/END lines.
+create user if not exists dbt_svc
+  type = service
+  default_role = transformer
+  default_warehouse = credito_wh
+  rsa_public_key = '<PUBLIC_KEY>';
+grant role transformer to user dbt_svc;
+
 -- The RAW table mirrors the CSV exactly: every column is text.
 -- Typing happens in dbt staging, so a bad value never breaks the load.
 create table if not exists credito.raw.scr_data (

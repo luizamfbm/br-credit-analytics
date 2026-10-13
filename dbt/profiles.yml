@@ -1,0 +1,22 @@
+# Credentials come from environment variables (see ../.env.example). Never hardcode them.
+# Targets:
+#   local -> DuckDB file on your machine, no cloud account needed (also used by CI)
+#   dev   -> your Snowflake trial
+br_credit:
+  target: "{{ env_var('DBT_TARGET', 'local') }}"
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../data/credito.duckdb') }}"
+      schema: main
+      threads: 4
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'TRANSFORMER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'CREDITO_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'CREDITO') }}"
+      schema: staging
+      threads: 4

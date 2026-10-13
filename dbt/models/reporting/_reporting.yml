@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: rpt_delinquency_monthly
+    description: Monthly outstanding and nonperforming portfolio by state, customer type and product group. Source for the dashboard.
+    columns:
+      - name: nonperforming_rate
+        description: nonperforming_portfolio / outstanding_portfolio, computed after aggregation.

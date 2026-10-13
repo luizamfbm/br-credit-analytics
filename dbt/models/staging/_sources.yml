@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: scr
+    description: >
+      SCR.data, the Banco Central do Brasil's monthly credit registry aggregates.
+      Loaded as-is (all text) into RAW by snowflake/03_copy_into.sql (or
+      ingestion/load_local_duckdb.py locally). License: ODbL.
+    database: "{{ target.database }}"
+    schema: raw
+    loaded_at_field: _loaded_at
+    freshness:
+      warn_after: {count: 45, period: day}
+      error_after: {count: 75, period: day}
+    tables:
+      - name: scr_data
+        description: One row per month x state x institution segment x customer profile x product x funding, as published.

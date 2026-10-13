@@ -1,0 +1,67 @@
+product_modality,product_submodality,product_group
+Adiantamentos a depositantes,Adiantamentos a depositantes,Other credit
+Direitos creditórios descontados,Antecipação de fatura de cartão de crédito,Receivables and supply chain
+Direitos creditórios descontados,Desconto de cheques,Receivables and supply chain
+Direitos creditórios descontados,Desconto de duplicatas,Receivables and supply chain
+Direitos creditórios descontados,Outros direitos creditórios descontados,Receivables and supply chain
+Direitos creditórios descontados,Outros títulos descontados,Receivables and supply chain
+Empréstimos,Capital de giro com prazo de vencimento até 365 dias,Working capital
+Empréstimos,Capital de giro com prazo de vencimento superior a 365 dias,Working capital
+Empréstimos,Capital de giro com teto rotativo,Working capital
+Empréstimos,"Cartão de crédito - compra, fatura parcelada ou saque financiado pela instituição financeira emitente do cartão",Credit card
+Empréstimos,Cartão de crédito - não migrado,Credit card
+Empréstimos,Cheque especial,Overdraft and revolving
+Empréstimos,Compror,Receivables and supply chain
+Empréstimos,Conta Garantida,Overdraft and revolving
+Empréstimos,Crédito pessoal - com consignação em folha de pagam.,Payroll-deductible loans
+Empréstimos,Crédito pessoal - sem consignação em folha de pagam.,Personal loans
+Empréstimos,Crédito rotativo vinculado a cartão de crédito,Credit card
+Empréstimos,Financiamento de projeto,Project and infrastructure
+Empréstimos,Home Equity,Real estate
+Empréstimos,Microcrédito,Microcredit
+Empréstimos,Outros empréstimos,Other credit
+Empréstimos,Recebíveis adquiridos,Receivables and supply chain
+Empréstimos,Vendor,Receivables and supply chain
+Financiamentos,Aquisição de bens - outros bens,Other asset financing
+Financiamentos,Aquisição de bens - veículos automotores,Vehicle financing
+Financiamentos,Cartão de crédito - compra ou fatura parcelada pela instituição financeira emitente do cartão,Credit card
+Financiamentos,Compror,Receivables and supply chain
+Financiamentos,Financiamento de projeto,Project and infrastructure
+Financiamentos,Financiamentos agroindustriais,Rural and agribusiness
+Financiamentos,Microcrédito,Microcredit
+Financiamentos,Outros financiamentos,Other credit
+Financiamentos,Recebíveis adquiridos,Receivables and supply chain
+Financiamentos,Vendor,Receivables and supply chain
+Financiamentos com interveniência,Aquisição de bens com interveniência - outros bens,Other asset financing
+Financiamentos com interveniência,Aquisição de bens com interveniência - veículos autom.,Vehicle financing
+Financiamentos com interveniência,Financiamento de projeto,Project and infrastructure
+Financiamentos com interveniência,Outros financiamentos com interveniência,Other credit
+Financiamentos de infraestrutura e desenvolvimento,Financiamento de infraestrutura e desenvolvimento,Project and infrastructure
+Financiamentos de infraestrutura e desenvolvimento,Financiamento de projeto,Project and infrastructure
+Financiamentos de títulos e valores mobiliários,Financiamento de TVM,Other credit
+Financiamentos imobiliários,Financiamento de projeto,Real estate
+Financiamentos imobiliários,Financiamento habitacional - SFH,Real estate
+Financiamentos imobiliários,Financiamento habitacional - exceto SFH,Real estate
+Financiamentos imobiliários,"Financiamento imobiliário - empreendim, exceto habitac.",Real estate
+Financiamentos rurais (ex-financiamentos rurais e agroindustriais),Comercialização,Rural and agribusiness
+Financiamentos rurais (ex-financiamentos rurais e agroindustriais),Custeio,Rural and agribusiness
+Financiamentos rurais (ex-financiamentos rurais e agroindustriais),Industrialização,Rural and agribusiness
+Financiamentos rurais (ex-financiamentos rurais e agroindustriais),Investimento,Rural and agribusiness
+Financiamentos à exportação,Adiantamento sobre cambiais entregues,Trade finance
+Financiamentos à exportação,Adiantamento sobre contratos de câmbio,Trade finance
+Financiamentos à exportação,Créd decorrentes de contratos de exportação-export note,Trade finance
+Financiamentos à exportação,Financiamento à exportação,Trade finance
+Financiamentos à exportação,Outros financiamentos à exportação,Trade finance
+Financiamentos à importação,Financiamento à importação,Trade finance
+Operações de arrendamento,Arrendamento financeiro de veículos automotores,Leasing
+Operações de arrendamento,Arrendamento financeiro exceto veículos automotores e imóveis,Leasing
+Operações de arrendamento,Arrendamento financeiro imobiliário,Leasing
+Operações de arrendamento,Arrendamento operacional,Leasing
+Outros créditos,Avais e fianças honrados,Other credit
+Outros créditos,Cartão de crédito - compra à vista e parcelado lojista,Credit card
+Outros créditos,Devedores por compra de valores e bens,Other credit
+Outros créditos,Outros com característica de crédito,Other credit
+Outros créditos,Recebíveis adquiridos,Receivables and supply chain
+Outros créditos,Títulos e créditos a receber,Other credit
+Empréstimos,ARO - adiantamento de receitas orçamentárias,Other credit
+Financiamentos à exportação,Financiamento de projeto,Trade finance

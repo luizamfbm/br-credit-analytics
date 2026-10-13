@@ -1,0 +1,30 @@
+name: br_credit
+version: "1.0.0"
+profile: br_credit
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  br_credit:
+    staging:
+      +schema: staging
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
+    reporting:
+      +schema: reporting
+      +materialized: table
+
+seeds:
+  br_credit:
+    +schema: seeds
+    uf_region:
+      +column_types: {state_code: varchar, state_name: varchar, region: varchar}
+    product_grouping:
+      +column_types: {product_modality: varchar, product_submodality: varchar, product_group: varchar}

@@ -1,0 +1,38 @@
+# Runs on every pull request: loads a 2,000-row sample of real SCR.data into DuckDB
+# and runs `dbt build` (seeds, models, snapshots and every test).
+# DuckDB keeps CI free and credential-free; the production target is Snowflake.
+name: dbt CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+    env:
+      DBT_TARGET: local
+      DBT_PROFILES_DIR: .
+      DUCKDB_PATH: ../data/credito.duckdb
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install "dbt-core>=1.10,<2.0" "dbt-duckdb>=1.10,<2.0" "duckdb>=1.1"
+
+      - name: Load CI sample into DuckDB
+        run: python ingestion/load_local_duckdb.py ci/sample/scrdata_202407_sample.csv --db data/credito.duckdb
+
+      - name: dbt deps
+        working-directory: dbt
+        run: dbt deps
+
+      - name: dbt build
+        working-directory: dbt
+        run: dbt build

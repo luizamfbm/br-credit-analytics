@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: stg_scr__credit_portfolio
+    description: SCR.data typed and cleaned. Values in BRL. One row per published combination of dimensions.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - reference_date
+              - state_code
+              - institution_segment
+              - customer_type
+              - economic_activity
+              - customer_size
+              - product_modality
+              - product_submodality
+              - funding_origin
+              - rate_index
+    columns:
+      - name: reference_date
+        description: Last day of the reference month.
+        data_tests: [not_null]
+      - name: state_code
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('uf_region')
+                field: state_code
+      - name: customer_type
+        description: PF (individual) or PJ (company).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["PF", "PJ"]
+      - name: number_of_operations
+        description: Number of credit operations. NULL when the BCB does not disclose it (published as -1).
+      - name: outstanding_portfolio
+        description: Carteira ativa. Current + overdue balance. Semi-additive (do not sum across months).
+        data_tests: [not_null]
+      - name: nonperforming_portfolio
+        description: Carteira de inadimplência. Balance of operations with any installment more than 90 days overdue.

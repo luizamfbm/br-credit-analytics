@@ -1,0 +1,16 @@
+version: 2
+
+seeds:
+  - name: uf_region
+    description: The 27 Brazilian federative units with name and region.
+    columns:
+      - name: state_code
+        data_tests: [unique, not_null]
+  - name: product_grouping
+    description: >
+      Business grouping of BCB credit products (modality + submodality). Maintained by hand;
+      history is kept by the snap_product_grouping snapshot.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [product_modality, product_submodality]

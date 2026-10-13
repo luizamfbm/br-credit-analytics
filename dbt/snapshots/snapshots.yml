@@ -1,0 +1,12 @@
+snapshots:
+  - name: snap_product_grouping
+    description: >
+      SCD Type 2 history of the business product grouping. When someone reclassifies a
+      submodality in seeds/product_grouping.csv and runs `dbt snapshot`, the old row is
+      closed (dbt_valid_to) and a new one opened, so past reports can be reproduced.
+    relation: ref('product_grouping')
+    config:
+      schema: snapshots
+      unique_key: [product_modality, product_submodality]
+      strategy: check
+      check_cols: [product_group]

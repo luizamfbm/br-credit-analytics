@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: dim_month
+    description: Calendar attributes of each reference month.
+    columns:
+      - name: month_key
+        data_tests: [unique, not_null]
+
+  - name: dim_state
+    description: Brazilian states with name and region.
+    columns:
+      - name: state_key
+        data_tests: [unique, not_null]
+      - name: region
+        description: North, Northeast, Center-West, Southeast or South.
+        data_tests: [not_null]
+
+  - name: dim_product
+    description: Credit products as classified by the BCB, plus a business grouping maintained in the product_grouping seed.
+    columns:
+      - name: product_key
+        data_tests: [unique, not_null]
+      - name: product_group
+        description: Business grouping. NULL means a submodality is missing from the seed.
+        data_tests: [not_null]
+
+  - name: dim_customer_profile
+    description: Borrower profile (PF/PJ, income band or company size, occupation or economic activity).
+    columns:
+      - name: customer_profile_key
+        data_tests: [unique, not_null]
+
+  - name: dim_funding
+    description: Junk dimension with institution segment, funding origin and interest rate index.
+    columns:
+      - name: funding_key
+        data_tests: [unique, not_null]
+
+  - name: fct_credit_portfolio_monthly
+    description: >
+      Periodic snapshot of the Brazilian credit portfolio, one row per month x state x customer profile
+      x product x funding. Balances are in BRL and semi-additive: never sum them across months.
+      Compute rates (e.g. nonperforming / outstanding) from summed numerators and denominators.
+    columns:
+      - name: portfolio_row_key
+        description: Surrogate key of the grain.
+        data_tests: [unique, not_null]
+      - name: month_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_month'), field: month_key}}
+      - name: state_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_state'), field: state_key}}
+      - name: customer_profile_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_customer_profile'), field: customer_profile_key}}
+      - name: product_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_product'), field: product_key}}
+      - name: funding_key
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_funding'), field: funding_key}}
+      - name: number_of_operations
+        description: NULL when not disclosed by the BCB. Use is_operations_undisclosed to filter.
+      - name: outstanding_portfolio
+        description: Carteira ativa = current_portfolio + overdue_portfolio.
+      - name: nonperforming_portfolio
+        description: Balance of operations with any installment more than 90 days overdue (includes their not-yet-due installments).

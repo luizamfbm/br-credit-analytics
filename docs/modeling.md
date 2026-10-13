@@ -51,3 +51,11 @@ The fact table only processes months newer than the latest month already loaded.
 ## Slowly changing dimensions
 
 The business product grouping is edited by hand in a seed. `snap_product_grouping` keeps its history as SCD Type 2 (`dbt_valid_from`, `dbt_valid_to`), so a report from last year can be rebuilt with last year's grouping.
+
+## Known source issues
+
+The data is kept exactly as the BCB publishes it; issues are reported by tests, not patched.
+
+| Month | Row | Issue | How it is handled |
+|---|---|---|---|
+| Dec 2024 | PR · Fintech · PF · payroll-deductible personal loans · 1 to 2 minimum wages · fixed rate (line 197,652 of `scrdata_202412.csv`) | `carteira_ativa` is R$ 345,414.46, but current + overdue add up to R$ 348,502.99 (difference of R$ 3,088.53). It is the only row out of 9.7 million that breaks the rule | `assert_portfolio_reconciles` warns on up to 10 such rows and fails above that |

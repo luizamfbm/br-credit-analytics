@@ -55,6 +55,8 @@ Modeling decisions are documented in [docs/modeling.md](docs/modeling.md). The t
 
 Source quirks handled in staging: Brazilian decimal commas, a stray Windows-1252 dash character in some product names, repeated and trailing spaces, and the number of operations published as `-1` when not disclosed (kept as `NULL` plus a flag, so it is never summed by accident).
 
+The reconciliation tests also caught a real inconsistency in the published data: one row in December 2024 whose outstanding balance does not equal current + overdue (off by R$ 3,088.53, 1 row out of 9.7 million). It is documented in [docs/modeling.md](docs/modeling.md#known-source-issues) and the test warns on isolated cases but fails if they become systematic.
+
 ## CI
 
 Every pull request runs `dbt build` on GitHub Actions against DuckDB with a 2,000-row sample of real data (`ci/sample/`). This keeps CI free and credential-free; the production target is Snowflake.

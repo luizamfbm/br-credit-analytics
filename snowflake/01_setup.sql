@@ -60,3 +60,4 @@ create file format if not exists credito.raw.scr_csv
   field_optionally_enclosed_by = '"'
   skip_header = 1
   encoding = 'UTF8';
+grant usage on file format credito.raw.scr_csv to role transformer;

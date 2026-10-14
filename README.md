@@ -13,7 +13,7 @@ An analytics platform built on **SCR.data**, the Banco Central do Brasil's publi
 ```
 BCB yearly ZIP ──► ingestion/download_scr.py ──► S3 (raw/scr_data/ano=YYYY/mes=MM/)
                                                    │
-                                     snowflake/03_copy_into.sql (COPY INTO, idempotent)
+               snowflake/03_copy_into.sql (COPY INTO from S3)  or  ingestion/load_snowflake_stage.py (PUT + COPY)
                                                    ▼
                                      Snowflake RAW.SCR_DATA (all text, as published)
                                                    │  dbt

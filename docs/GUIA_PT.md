@@ -99,6 +99,16 @@ Tire um print da linhagem: ele vai para o README.
 
 Rodar o COPY de novo não duplica nada: o Snowflake lembra quais arquivos já carregou.
 
+**Alternativa se o passo 4.4 falhar** (contas AWS no plano gratuito não deixam o Snowflake assumir a role; o erro é `Error assuming AWS_ROLE ... not authorized to perform: sts:AssumeRole`): os arquivos continuam no S3, mas a carga no Snowflake é feita do seu Mac, por um stage interno.
+
+1. No Snowflake, rode `snowflake/04_internal_stage.sql`.
+2. No terminal:
+   ```bash
+   set -a; source .env; set +a
+   python ingestion/load_snowflake_stage.py --start 2024-01 --end 2026-07 --source-dir ~/Downloads
+   ```
+   O script envia cada CSV com `PUT` (comprimido em gzip) e roda o `COPY INTO`. No fim, mostra quantas linhas o RAW tem. Pode rodar de novo sem duplicar nada.
+
 ## 5. dbt no Snowflake (20 min)
 
 1. No `.env`, preencha:

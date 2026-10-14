@@ -78,7 +78,7 @@ cd dbt && export DBT_PROFILES_DIR=. && dbt deps && dbt build
 
 - [x] Ingestion to S3, Snowflake RAW, dbt staging and star schema, tests, CI
 - [ ] Tableau Public dashboard
-- [ ] Airflow orchestration with monthly backfill (`orchestration/`)
+- [ ] Airflow orchestration that detects new BCB releases and backfills when they land (`orchestration/`). Because publication can lag by months, it will first be tested by replaying real 2026 files month by month in a separate `REPLAY` environment, covering several months arriving at once, duplicate files and revisions to months already loaded
 - [ ] LLM monthly summary with claim-level validation against the warehouse (`ai/`)
 
 ## Data source and license

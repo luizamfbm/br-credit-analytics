@@ -20,3 +20,13 @@ br_credit:
       database: "{{ env_var('SNOWFLAKE_DATABASE', 'CREDITO') }}"
       schema: staging
       threads: 4
+    replay:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'DBT_SVC') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'TRANSFORMER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'CREDITO_WH') }}"
+      database: CREDITO_REPLAY
+      schema: staging
+      threads: 4

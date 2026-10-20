@@ -1,0 +1,7 @@
+services:
+  scheduler:
+    volumes:
+      - ../dbt:/usr/local/airflow/include/dbt
+      - ../ingestion:/usr/local/airflow/include/ingestion
+      - ../data:/usr/local/airflow/include/data
+      - /Users/luizaboamorte/.snowflake/keys:/usr/local/airflow/include/keys:ro

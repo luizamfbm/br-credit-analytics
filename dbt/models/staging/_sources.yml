@@ -11,8 +11,8 @@ sources:
     config:
       loaded_at_field: _loaded_at
       freshness:
-        warn_after: {count: 45, period: day}
-        error_after: {count: 75, period: day}
+        warn_after: {count: 210, period: day}
+        error_after: {count: 270, period: day}
     tables:
       - name: scr_data
         description: One row per month x state x institution segment x customer profile x product x funding, as published.

@@ -1,7 +1,8 @@
 {{
   config(
     materialized = 'incremental',
-    unique_key = 'portfolio_row_key',
+    incremental_strategy = 'delete+insert',
+    unique_key = 'month_date',
     on_schema_change = 'fail'
   )
 }}
@@ -10,14 +11,34 @@
   Periodic snapshot fact table.
   Grain: one row per month x state x customer profile x product x funding.
   Balances are semi-additive: sum across any dimension except month.
-  Incremental: each run only processes months newer than the latest one already loaded.
+
+  Incremental by month: each run reprocesses every month whose raw rows were loaded
+  after the last build of this table. That covers new months AND revised months
+  (the Central Bank can republish a month; the loader reloads it in RAW with a new
+  load time). delete+insert on month_date replaces the whole month, so rows that
+  disappear in a revision are removed too, not left behind as a merge would.
 #}
 
-with stg as (
+with changed_months as (
+
+    {% if is_incremental() %}
+    select reference_date
+    from {{ ref('stg_scr__credit_portfolio') }}
+    group by reference_date
+    having max(_loaded_at) > (
+        select coalesce(max(_loaded_at), cast('1900-01-01' as timestamp)) from {{ this }}
+    )
+    {% else %}
+    select 1 as reference_date where 1 = 0
+    {% endif %}
+
+),
+
+stg as (
 
     select * from {{ ref('stg_scr__credit_portfolio') }}
     {% if is_incremental() %}
-    where reference_date > (select max(month_date) from {{ this }})
+    where reference_date in (select reference_date from changed_months)
     {% endif %}
 
 )
@@ -48,6 +69,8 @@ select
     overdue_portfolio,
     outstanding_portfolio,
     nonperforming_portfolio,
-    problem_assets
+    problem_assets,
+
+    _loaded_at
 
 from stg

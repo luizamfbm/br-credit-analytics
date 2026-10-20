@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import logging
 import os
 import re
@@ -72,6 +73,59 @@ def download_year_zip(year: int, cache_dir: Path) -> Path:
                 fh.write(chunk)
     tmp.rename(target)
     return target
+
+
+def remote_signature(year: int) -> dict | None:
+    """ETag, Last-Modified and size of the yearly ZIP from a HEAD request, without downloading.
+
+    None means the year is not published (404). An empty dict means the server sent none of
+    those headers, so the only way to know whether the file changed is to download it.
+    """
+    resp = requests.head(BASE_URL.format(year=year), allow_redirects=True, timeout=60)
+    if resp.status_code == 404:
+        return None
+    resp.raise_for_status()
+    return {k: resp.headers[k] for k in ("ETag", "Last-Modified", "Content-Length") if k in resp.headers}
+
+
+def fetch_year_if_changed(year: int, cache_dir: Path) -> tuple[Path | None, bool]:
+    """Return (zip_path, changed). Downloads only when the remote file looks different
+    from the last one seen, which the BCB publishes in batches a few times a year."""
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    target = cache_dir / f"scrdata_{year}.zip"
+    state_file = cache_dir / f"scrdata_{year}.json"
+    sig = remote_signature(year)
+    if sig is None:
+        log.info("Year %s is not published yet", year)
+        return None, False
+    old = json.loads(state_file.read_text()) if state_file.exists() else None
+    if sig and sig == old and target.exists() and target.stat().st_size > 0:
+        log.info("Year %s unchanged since the last check (%s)", year, sig)
+        return target, False
+    if target.exists():
+        target.unlink()  # force a fresh download instead of the cached copy
+    path = download_year_zip(year, cache_dir)
+    state_file.write_text(json.dumps(sig))
+    log.info("Year %s downloaded (%s)", year, sig or "no ETag/Last-Modified sent")
+    return path, True
+
+
+def extract_all(zip_path: Path, out_dir: Path) -> dict[str, Path]:
+    """Extract every monthly CSV in a yearly ZIP to out_dir/scrdata_YYYYMM.csv."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    files = {}
+    with zipfile.ZipFile(zip_path) as zf:
+        for name in zf.namelist():
+            match = MONTH_IN_NAME.search(Path(name).name)
+            if not name.lower().endswith(".csv") or not match:
+                continue
+            dest = out_dir / f"scrdata_{match.group(1)}.csv"
+            with zf.open(name) as src, open(dest, "wb") as dst:
+                for chunk in iter(lambda: src.read(1 << 20), b""):
+                    dst.write(chunk)
+            files[match.group(1)] = dest
+    log.info("Extracted %s from %s", sorted(files), zip_path.name)
+    return files
 
 
 def extract_month(zip_path: Path, month: date, out_dir: Path) -> Path | None:

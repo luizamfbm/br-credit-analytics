@@ -6,7 +6,7 @@ An analytics platform built on **SCR.data**, the Banco Central do Brasil's publi
 
 > **What the data shows (Jul 2024 → Jul 2026):** the system's nonperforming rate rose from **3.1% to 4.8%** while the portfolio grew from R$ 6.3 to R$ 7.6 trillion. The increase is concentrated in individuals (3.8% → 5.8%) and in personal loans without payroll deduction (7.1% → 11.3%); payroll-deductible loans (*consignado*) stayed far lower (2.5% → 3.7%).
 >
-> *Brazilian banks adopted new accounting rules (CMN Resolution 4,966) in January 2025, so part of the change across that date may come from measurement rather than borrower behavior.*
+> *Brazilian banks adopted new accounting rules (CMN Resolution 4,966) in January 2025, and the Central Bank estimates that about 70% of the rise through June 2025 came from that change, because delinquent loans now stay longer on the books before write-off ([BCB, Monetary Policy Report, Sep 2025](https://www.bcb.gov.br/content/ri/relatorioinflacao/202509/rpm202509b6p.pdf)).*
 
 ## Architecture
 

@@ -8,6 +8,14 @@ An analytics platform built on **SCR.data**, the Banco Central do Brasil's publi
 >
 > *Brazilian banks adopted new accounting rules (CMN Resolution 4,966) in January 2025, so part of the change across that date may come from measurement rather than borrower behavior.*
 
+## Dashboard
+
+[![Dashboard](docs/img/dashboard.png)](https://public.tableau.com/app/profile/lu.za.b.a.morte/viz/BrazilCreditDelinquency/Dashboard12)
+
+**[Open the interactive dashboard on Tableau Public](https://public.tableau.com/app/profile/lu.za.b.a.morte/viz/BrazilCreditDelinquency/Dashboard12)**
+
+Built from `reporting.rpt_delinquency_monthly`, exported with `dashboards/export_reporting.py`: Tableau Public cannot connect to Snowflake, so it reads an extract and no credentials go into the published workbook. The delinquency rate is a calculated field, `SUM(nonperforming) / SUM(outstanding)`, so it stays correct at any level of filtering.
+
 ## Architecture
 
 ```
@@ -77,8 +85,8 @@ cd dbt && export DBT_PROFILES_DIR=. && dbt deps && dbt build
 ## Roadmap
 
 - [x] Ingestion to S3, Snowflake RAW, dbt staging and star schema, tests, CI
-- [ ] Tableau Public dashboard
-- [ ] Airflow orchestration that detects new BCB releases and backfills when they land (`orchestration/`). Because publication can lag by months, it will first be tested by replaying real 2026 files month by month in a separate `REPLAY` environment, covering several months arriving at once, duplicate files and revisions to months already loaded
+- [x] [Tableau Public dashboard](https://public.tableau.com/app/profile/lu.za.b.a.morte/viz/BrazilCreditDelinquency/Dashboard12)
+- [x] Airflow orchestration that detects new BCB releases and backfills when they land (`orchestration/`). Because publication can lag by months, it will first be tested by replaying real 2026 files month by month in a separate `REPLAY` environment, covering several months arriving at once, duplicate files and revisions to months already loaded
 - [ ] LLM monthly summary with claim-level validation against the warehouse (`ai/`)
 
 ## Data source and license

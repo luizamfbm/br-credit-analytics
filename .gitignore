@@ -16,3 +16,4 @@ dbt/.user.yml
 .DS_Store
 .idea/
 .vscode/
+dashboards/data/

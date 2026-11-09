@@ -36,3 +36,8 @@ jobs:
       - name: dbt build
         working-directory: dbt
         run: dbt build
+
+      - name: LLM summary validator tests
+        run: |
+          pip install pytest
+          python -m pytest -q ai/tests

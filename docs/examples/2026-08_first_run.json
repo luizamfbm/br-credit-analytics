@@ -1,0 +1,39 @@
+{
+  "month": "2026-08",
+  "model": "claude-haiku-5-5",
+  "accepted": [
+    {
+      "text": "In August 2026, the delinquency rate of the whole system in Brazil was 5.0%.",
+      "metric_id": "rate_total",
+      "value": 5.01
+    },
+    {
+      "text": "The delinquency rate for companies (PJ) was 3.1% in August 2026.",
+      "metric_id": "rate_companies",
+      "value": 3.12
+    },
+    {
+      "text": "The system delinquency rate was 0.9 percentage points higher than in the same month last year.",
+      "metric_id": "change_12m_total_pp",
+      "value": 0.91
+    },
+    {
+      "text": "The individuals delinquency rate was 1.2 percentage points higher than in the same month last year.",
+      "metric_id": "change_12m_individuals_pp",
+      "value": 1.24
+    },
+    {
+      "text": "Personal loans had the highest delinquency rate among product groups, at 11.6%.",
+      "metric_id": "top_product_rate",
+      "value": 11.62
+    }
+  ],
+  "rejected": [
+    {
+      "text": "The delinquency rate of individuals (PF) was 6.2% in August 2026, while the rate for companies (PJ) was 3.1%.",
+      "metric_id": "rate_individuals",
+      "value": 6.19,
+      "reason": "sentence has 3.1, but the value is 6.19"
+    }
+  ]
+}

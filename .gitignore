@@ -17,3 +17,4 @@ dbt/.user.yml
 .idea/
 .vscode/
 dashboards/data/
+ai/logs/

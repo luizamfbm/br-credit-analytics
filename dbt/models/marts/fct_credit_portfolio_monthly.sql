@@ -26,7 +26,7 @@ with changed_months as (
     from {{ ref('stg_scr__credit_portfolio') }}
     group by reference_date
     having max(_loaded_at) > (
-        select coalesce(max(_loaded_at), cast('1900-01-01' as timestamp)) from {{ this }}
+        select coalesce(max(t._loaded_at), cast('1900-01-01' as timestamp)) from {{ this }} t
     )
     {% else %}
     select 1 as reference_date where 1 = 0

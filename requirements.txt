@@ -6,3 +6,9 @@ boto3>=1.34
 requests>=2.31
 anthropic
 pytest
+pandas
+statsmodels
+matplotlib
+pandas
+statsmodels
+matplotlib

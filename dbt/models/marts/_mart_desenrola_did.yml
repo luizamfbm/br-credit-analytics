@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: mart_desenrola_did
+    description: >
+      Individuals' balances by month, product group and income band, labelled for the
+      Novo Desenrola Brasil difference-in-differences analysis (analysis/desenrola_did.py).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [month_date, product_group, income_band]
+    columns:
+      - name: month_date
+        data_tests: [not_null]
+      - name: product_role
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['eligible', 'control']
+      - name: income_band
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['up_to_5_mw', 'above_5_mw', 'unknown']
+      - name: period
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pre', 'program', 'post']
+      - name: outstanding_portfolio
+        data_tests: [not_null]

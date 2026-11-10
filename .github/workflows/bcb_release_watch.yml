@@ -1,0 +1,31 @@
+# Weekly check for a new Central Bank SCR.data batch. Runs in the cloud, so it works with
+# no computer on. Sends HEAD requests only; opens a GitHub issue when a file changed.
+name: BCB release watcher
+
+on:
+  schedule:
+    - cron: "0 11 * * 1"   # Mondays 11:00 UTC = 08:00 in Sao Paulo
+  workflow_dispatch:        # run it by hand from the Actions tab
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Check the Central Bank's yearly files
+        working-directory: ingestion
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python watch_bcb_release.py

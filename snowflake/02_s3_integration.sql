@@ -1,7 +1,7 @@
 -- =====================================================================
 -- 02_s3_integration.sql: connect Snowflake to your S3 bucket (run once)
 -- Replace <AWS_ACCOUNT_ID> and <BUCKET> before running.
--- Full walkthrough in docs/GUIA_PT.md, step 4.
+-- Run after 01_setup.sql. Accounts that cannot assume an IAM role use 04_internal_stage.sql instead.
 -- =====================================================================
 use role accountadmin;
 

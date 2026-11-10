@@ -44,9 +44,25 @@ Surrogate keys are MD5 hashes of the natural keys (`dbt_utils.generate_surrogate
 * **Nonperforming portfolio (carteira de inadimplência):** total balance of operations with at least one installment more than 90 days overdue. It includes the not-yet-due installments of those operations, so it is larger than `overdue_over_90d`.
 * **Problem assets (ativo problemático):** operations overdue more than 90 days or with signs they won't be fully paid. The criteria changed in January 2025, so compare this measure across that date with care.
 
-## Incremental strategy
+## Incremental strategy and revised months
 
-The fact table only processes months newer than the latest month already loaded. Months are published whole and never partially, so a month-level high-water mark is enough. If the BCB revises a past month, run `dbt build --full-refresh -s fct_credit_portfolio_monthly`.
+The Central Bank can republish a month it already released. The pipeline treats a revision like any new file, at three levels:
+
+1. **Detection by content.** Each load records the file's MD5 and row count in `RAW.LOAD_LOG`. A month is (re)loaded when its file is new or its MD5 differs from the latest entry, so re-running with nothing new changes nothing.
+2. **Idempotent reload in RAW.** In one transaction, the loader deletes the month's rows, runs `COPY INTO` with `FORCE = TRUE` and writes the log entry. `FORCE` is needed because `COPY` remembers file names it already loaded and would silently skip a revised file with the same name. `on_error = abort_statement` makes a damaged file fail the whole statement, so the transaction rolls back and the previous version stays.
+3. **Reprocessing in the fact.** `fct_credit_portfolio_monthly` is incremental with `incremental_strategy = 'delete+insert'` and `unique_key = 'month_date'`. Each run reprocesses every month whose raw rows have a `_loaded_at` later than the latest one in the fact, which covers new and revised months alike. Deleting and reinserting the whole month removes rows that disappear in a revision; a `merge` would leave them behind.
+
+An earlier version used a month high-water mark (only months newer than the latest one), which is correct for new months but misses revisions. It was replaced when the replay tests showed a revised month not reaching the fact.
+
+**Replay tests.** Releases come in batches a few times a year, so the pipeline was tested on a zero-copy clone of the database (`CREDITO_REPLAY`) by feeding real 2026 files into a landing folder one by one: a batch of several months, the same file twice and a revised month.
+
+## Freshness
+
+The BCB publishes in batches (for example Jan-Jul in one release, Aug-Dec the following January), so a monthly freshness rule would fail most of the year. The source warns after 210 days without a new month and errors after 270, which is longer than the usual gap between releases and shorter than two missed ones. A weekly HEAD request on the yearly ZIPs (Airflow `scr_bcb_weekly` and a GitHub Actions watcher) detects new releases without downloading anything.
+
+## Analysis mart
+
+`mart_desenrola_did` is a panel built for one question (see [analysis/desenrola.md](analysis/desenrola.md)): individuals only, from January 2025 (after the CMN 4,966 accounting change), product group × income band × month, with `product_role` (eligible or control), `income_band` and `period` (pre, program, post) as columns. It stores summed balances, not rates: the analysis computes each cell's rate from those sums, for the same reason as everywhere else in the model.
 
 ## Slowly changing dimensions
 

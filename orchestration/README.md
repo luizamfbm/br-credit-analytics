@@ -1,45 +1,35 @@
-Overview
-========
+# Orchestration (Airflow on Astro)
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+Two DAGs, defined in one file by `make_dag` ([dags/scr_monthly.py](dags/scr_monthly.py)):
 
-Project Contents
-================
+| DAG | Schedule | Source | Target database |
+|---|---|---|---|
+| `scr_monthly` | manual | `data/replay/landing` (files you "publish" by hand) | `CREDITO_REPLAY` (dbt target `replay`) |
+| `scr_bcb_weekly` | Mondays 07:00, São Paulo | BCB site: HEAD request on this year's and last year's ZIPs, download only if changed | `CREDITO` (dbt target `dev`) |
 
-Your Astro project contains the following files and folders:
+Each run: `detect` (MD5 of each available file vs the latest entry in `RAW.LOAD_LOG`) → `load` (one mapped task per new or revised month, one at a time, delete + `COPY ... FORCE` + log entry in a single transaction) → `dbt_build` (once). A run with nothing new ends as **skipped**.
 
-- dags: This folder contains the Python files for your Airflow Dags. By default, this directory includes one example Dag:
-    - `example_astronauts`: This Dag shows a simple ETL pipeline example that queries the list of astronauts currently in space from the Open Notify API and prints a statement for each astronaut. The Dag uses the TaskFlow API to define tasks in Python, and dynamic task mapping to dynamically print a statement for each astronaut. For more on how this Dag works, see our [Getting started tutorial](https://www.astronomer.io/docs/learn/get-started-with-airflow).
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop Dags in this project.
+The DAGs load into Snowflake. Since the Snowflake trial ended, the project runs on DuckDB locally (see the main [README](../README.md#architecture)); the DAG code is kept as it ran.
 
-Deploy Your Project Locally
-===========================
+## Run locally
 
-Start Airflow on your local machine by running 'astro dev start'.
+Needs the [Astro CLI](https://www.astronomer.io/docs/astro/cli/install-cli) and Docker (or Podman).
 
-This command will spin up five Docker containers on your machine, each for a different Airflow component:
+```bash
+cd orchestration
+cp ../.env.example .env        # SNOWFLAKE_* values; the key path is the one inside the container:
+                               # SNOWFLAKE_PRIVATE_KEY_PATH=/usr/local/airflow/include/keys/dbt_svc_key.p8
+astro dev start                # UI at http://localhost:8080
+```
 
-- Postgres: Airflow's Metadata Database
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- Dag Processor: The Airflow component responsible for parsing Dags
-- API Server: The Airflow component responsible for serving the Airflow UI and API
-- Triggerer: The Airflow component responsible for triggering deferred tasks
+`docker-compose.override.yml` mounts `../dbt`, `../ingestion` and `../data` into the scheduler, and the folder with the Snowflake private key (read-only). Change the key folder to your own path. The key itself never goes into the image or the repository.
 
-When all five containers are ready the command will open the browser to the Airflow UI at http://localhost:8080/. You should also be able to access your Postgres Database at 'localhost:5432/postgres' with username 'postgres' and password 'postgres'.
+## Replay a release by hand
 
-Note: If you already have either of the above ports allocated, you can either [stop your existing Docker containers or change the port](https://www.astronomer.io/docs/astro/cli/troubleshoot-locally#ports-are-not-available-for-my-local-airflow-webserver).
+```bash
+mkdir -p ../data/replay/vault ../data/replay/landing
+cp ~/Downloads/scrdata_2026*.csv ../data/replay/vault/      # real files, kept aside
+cp ../data/replay/vault/scrdata_202602.csv ../data/replay/landing/   # "publish" February
+```
 
-Deploy Your Project to Astronomer
-=================================
-
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://www.astronomer.io/docs/astro/deploy-code/
-
-Contact
-=======
-
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+Trigger `scr_monthly` in the UI. Then try a batch (copy several months), the same file again (the run is skipped) and a revised month (edit a value and copy it again: only that month reloads).

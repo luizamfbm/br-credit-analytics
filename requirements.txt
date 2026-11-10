@@ -9,6 +9,3 @@ pytest
 pandas
 statsmodels
 matplotlib
-pandas
-statsmodels
-matplotlib
